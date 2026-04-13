@@ -505,7 +505,7 @@ class VT13 : public LibXR::Application {
       output_data.chassis.self_define = CMD::ChasStat::NONE;
 
       output_data.gimbal.yaw =
-          -2.0f * (static_cast<float>(curr_rc.ch_r_x) - VT13_CH_VALUE_MID) *
+          2.0f * (static_cast<float>(curr_rc.ch_r_x) - VT13_CH_VALUE_MID) *
           INV_FULL_RANGE;
       output_data.gimbal.pit =
           2.0f * (static_cast<float>(curr_rc.ch_r_y) - VT13_CH_VALUE_MID) *
