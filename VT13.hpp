@@ -225,7 +225,7 @@ class VT13 : public LibXR::Application {
 
     while (1) {
       if (vt13->uart_->Read({rx_buffer, RX_BUFFER_SIZE}, vt13->op_) ==
-          ErrorCode::OK) {
+          LibXR::ErrorCode::OK) {
         for (std::size_t idx = 0; idx < RX_BUFFER_SIZE; ++idx) {
           uint8_t rx_byte = rx_buffer[idx];
 
@@ -252,7 +252,7 @@ class VT13 : public LibXR::Application {
             }
 
             frame_pos = 0;
-            if (vt13->ParseRC(frame_buffer, rc_data) == ErrorCode::OK) {
+            if (vt13->ParseRC(frame_buffer, rc_data) == LibXR::ErrorCode::OK) {
               /* 仅在完整且通过校验的帧上更新时间戳并下发控制数据 */
               vt13->last_time_ = LibXR::Timebase::GetMilliseconds();
               vt13->cmd_->FeedRC(CMD::RCInputSource::RC_INPUT_VT13, rc_data);
@@ -269,22 +269,22 @@ class VT13 : public LibXR::Application {
    * @brief 解析VT13原始帧并生成CMD控制数据
    * @param raw_data 21字节原始缓冲
    * @param output_data 解析后的CMD数据
-   * @return ErrorCode::OK 解析成功；其他值表示校验或数据范围异常
+   * @return LibXR::ErrorCode::OK 解析成功；其他值表示校验或数据范围异常
    */
-  ErrorCode ParseRC(const uint8_t* raw_data, CMD::Data& output_data) {
+  LibXR::ErrorCode ParseRC(const uint8_t* raw_data, CMD::Data& output_data) {
     if (!raw_data) {
-      return ErrorCode::PTR_NULL;
+      return LibXR::ErrorCode::PTR_NULL;
     }
 
     /* 固定帧头校验 */
     if (raw_data[0] != VT13_FRAME_HEAD_0 || raw_data[1] != VT13_FRAME_HEAD_1) {
-      return ErrorCode::CHECK_ERR;
+      return LibXR::ErrorCode::CHECK_ERR;
     }
 
     /* CRC覆盖前19字节，帧尾2字节为校验值 */
     const bool CRC_OK = VerifyCRC(raw_data);
     if (!CRC_OK) {
-      return ErrorCode::CHECK_ERR;
+      return LibXR::ErrorCode::CHECK_ERR;
     }
 
     Data curr_rc{};
@@ -320,7 +320,7 @@ class VT13 : public LibXR::Application {
         curr_rc.sw > static_cast<uint8_t>(SwitchPos::VT13_SW_POS_S));
 
     if (!RANGE_OK) {
-      return ErrorCode::CHECK_ERR;
+      return LibXR::ErrorCode::CHECK_ERR;
     }
 
     output_data = CMD::Data();
@@ -525,7 +525,7 @@ class VT13 : public LibXR::Application {
 
     this->last_data_ = curr_rc;
 
-    return ErrorCode::OK;
+    return LibXR::ErrorCode::OK;
   }
 
   /**
