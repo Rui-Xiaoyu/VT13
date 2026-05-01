@@ -483,7 +483,7 @@ class VT13 : public LibXR::Application {
       output_data.chassis.z = 0.0f;
 
       output_data.gimbal.pit = static_cast<float>(curr_rc.y) * MOUSE_SCALER;
-      output_data.gimbal.yaw = -static_cast<float>(curr_rc.x) * MOUSE_SCALER;
+      output_data.gimbal.yaw = static_cast<float>(curr_rc.x) * MOUSE_SCALER;
       output_data.gimbal.rol = 0.0f;
 
       if (curr_rc.press_l != 0) {
